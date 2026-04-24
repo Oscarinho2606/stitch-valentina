@@ -589,6 +589,41 @@
       100% { transform: translateY(-10vh) scale(1); opacity: 0; }
     }
 
+    /* ── BOTÓN MÚSICA ── */
+    #musicBtn {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 100;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: rgba(0,20,60,0.7);
+      border: 1.5px solid var(--neon-blue);
+      box-shadow: 0 0 20px rgba(0,234,255,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s;
+      animation: musicPulse 2s ease-in-out infinite alternate;
+    }
+    #musicBtn:hover {
+      box-shadow: 0 0 40px rgba(0,234,255,0.7);
+      transform: scale(1.1);
+    }
+    #musicBtn.muted {
+      border-color: var(--neon-pink);
+      box-shadow: 0 0 20px rgba(255,77,222,0.3);
+      filter: grayscale(0.5);
+    }
+    @keyframes musicPulse {
+      0%   { box-shadow: 0 0 15px rgba(0,234,255,0.3); }
+      100% { box-shadow: 0 0 35px rgba(178,75,255,0.6); }
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 700px) {
       .hero { flex-direction: column; }
@@ -601,6 +636,14 @@
   <canvas id="stars-canvas"></canvas>
   <div class="aurora"></div>
   <div class="particles" id="particles"></div>
+
+  <!-- MÚSICA DE FONDO -->
+  <audio id="bgMusic" loop>
+    <source src="Bruno Mars - Locked Out Of Heaven (Official Music Video)(mp3j.cc).mp3" type="audio/mpeg"/>
+  </audio>
+
+  <!-- BOTÓN MÚSICA -->
+  <div id="musicBtn" onclick="toggleMusic()" title="Música">🎵</div>
 
   <div class="page">
 
@@ -801,6 +844,33 @@
         box-shadow: 0 0 ${size*3}px ${COLORS[Math.floor(Math.random()*COLORS.length)]};
       `;
       particlesEl.appendChild(p);
+    }
+
+    // ── MÚSICA ──
+    const music = document.getElementById('bgMusic');
+    const btn   = document.getElementById('musicBtn');
+    music.volume = 0.4;
+
+    // autoplay al primer click en la página
+    let started = false;
+    document.addEventListener('click', () => {
+      if (!started) {
+        music.play().catch(() => {});
+        started = true;
+        btn.classList.remove('muted');
+      }
+    }, { once: false });
+
+    function toggleMusic() {
+      if (music.paused) {
+        music.play();
+        btn.textContent = '🎵';
+        btn.classList.remove('muted');
+      } else {
+        music.pause();
+        btn.textContent = '🔇';
+        btn.classList.add('muted');
+      }
     }
 
     // ── 3D TILT CARD ──
